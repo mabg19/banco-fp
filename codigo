@@ -1,31 +1,88 @@
-#Adicionar categoria
-categoria = {"CASA":[], "COMIDA":[], "TRANSPORTE": []}
-contS = 0 
-contE = 0 
-print('\tCATEGORIAS:\nCASA\nCOMIDA\nTRANSPORTE\nOUTRO')
-inicio = input('\nDeseja realizar alguma transação [S]Sim ou [N]Não?  ').upper()
+# [1] e [2] - Adição
+# [3] - Leitura (extrato - total e todas as operações por categoria)
+# [4] - Deleção (deleta categoria e operação)
+# [5] - Atualizações (categorias e valores)
+print('Olá Natália!')
+
+def saida(categoriaS, categoriaE):
+    print('\n \tCATEGORIAS:\nCASA\nCOMIDA\nTRANSPORTE\nOUTRO')
+    escolhaCategoria = input('\nDigite a categoria da sua despesa: ').upper()
+    if escolhaCategoria == 'OUTRO':
+        nova = input("Adicione uma categoria: ").upper()
+        categoriaS[nova] = []
+        categoriaE[nova] = []
+        valor = float(input(f'Digite o valor dessa despesa: '))
+        categoriaS[nova].append(valor)
+    else:
+        valor = float(input(f'Digite o valor dessa despesa: '))
+        categoriaS[escolhaCategoria].append(valor)
+    return categoriaS, categoriaE
+
+
+def entrada(categoriaS, categoriaE):
+    print('\n \tCATEGORIAS:\nCASA\nCOMIDA\nTRANSPORTE\nOUTRO')
+    escolhaCategoria = input('\nDigite a categoria da sua entrada: ').upper()
+    if escolhaCategoria == 'OUTRO':
+        nova = input("Adicione uma categoria: ").upper()
+        categoriaE[nova] = []
+        categoriaS[nova] = []
+        valor = float(input(f'Digite o valor dessa entrada: '))
+        categoriaE[nova].append(valor)
+    else:
+        valor = float(input(f'Digite o valor dessa entrada: '))
+        categoriaE[escolhaCategoria].append(valor)
+    return categoriaS, categoriaE
+
+
+def leitura(categoriaS, categoriaE):
+    print('<----------------------------------------------->')
+    print('\tSALDO ATUAL POR CATEGORIA: ')
+    for i in categoriaS:
+        for j in categoriaE:
+            if i == j:
+                total = sum(categoriaE[j]) - sum(categoriaS[i])
+                
+                print(f'{i}:', 'R${:.2f}'.format(total))
+                
+    print('<----------------------------------------------->')
+    print('\t\tENTRADAS:')
+    for j in categoriaE:
+        print(f'{j}: {categoriaE[j]}')
+    
+    print('<----------------------------------------------->')
+    print('\t\tSAÍDAS:')
+    for i in categoriaS:
+        print(f'{i}:{categoriaS[i]}')
+        
+    return (total)
+
+# categoria e valores dentro dela, no fim a subtração da entrada menos a saída
+
+categoriaS = {"CASA": [], "COMIDA": [], "TRANSPORTE": []}
+categoriaE = {"CASA": [], "COMIDA": [], "TRANSPORTE": []}
+
+inicio = input('Deseja realizar alguma transação [S]Sim ou [N]Não?  ').upper()
 
 while inicio == 'S':
 
-    transacao = int(input('\nDigite o tipo de operação que deseja realizar: \n[1] = Entrada de dinheiro  \n[2] = Saída de dinheiro: '))
-    if transacao == 2:
-        escolhaCategoria = input('\nDigite a categoria da sua despesa: ').upper()
-        if escolhaCategoria == 'OUTRO':
-            nova = input("Adicione uma categoria: ").upper()
-            categoria[nova] = []
-            valor = float(input(f'Digite o valor dessa despesa: '))
-            categoria[nova].append([valor])
-        
-        else:
-            valor = float(input(f'Digite o valor dessa despesa: '))
-            categoria[escolhaCategoria].append([valor])
+    transacao = int(input('\nDigite o tipo de operação que deseja realizar:\n\n[1] = Entrada de dinheiro\n[2] = Saída de dinheiro \n[3] = Extrato Bancário: \n[4] = Deleção \n[5] = Atualizações \n--> '))
 
+    if transacao == 1:
+        categoriaS, categoriaE = entrada(categoriaS, categoriaE)
+    elif transacao == 2:
+        categoriaS, categoriaE = saida(categoriaS, categoriaE)
+    elif transacao == 3:
+        total = leitura(categoriaS, categoriaE)
 
-    continuar = input('Deseja realizar outra transação [S]Sim ou [N]Não?  ').upper()
-    print(categoria)
+    print()
+    print(categoriaE)
+    print(categoriaS)
+    continuar = input('\nDeseja realizar outra transação [S]Sim ou [N]Não?  ').upper()
 
     if continuar == 'N':
+        print("\nAté logo.")
         break
 
-if inicio == 'N':
-    print("Até logo.")
+while inicio == 'N':
+    print("\nAté logo.")
+    break
