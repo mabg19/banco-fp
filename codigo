@@ -1,88 +1,302 @@
-# [1] e [2] - Adição
-# [3] - Leitura (extrato - total e todas as operações por categoria)
-# [4] - Deleção (deleta categoria e operação)
-# [5] - Atualizações (categorias e valores)
-print('Olá Natália!')
+def cadastrar_usuario():
+    cpf = input("Digite o CPF: ")
+    senha = input("Digite a senha: ")
+    return {"cpf": cpf, "senha": senha}
 
-def saida(categoriaS, categoriaE):
-    print('\n \tCATEGORIAS:\nCASA\nCOMIDA\nTRANSPORTE\nOUTRO')
-    escolhaCategoria = input('\nDigite a categoria da sua despesa: ').upper()
-    if escolhaCategoria == 'OUTRO':
-        nova = input("Adicione uma categoria: ").upper()
-        categoriaS[nova] = []
-        categoriaE[nova] = []
-        valor = float(input(f'Digite o valor dessa despesa: '))
-        categoriaS[nova].append(valor)
-    else:
-        valor = float(input(f'Digite o valor dessa despesa: '))
-        categoriaS[escolhaCategoria].append(valor)
-    return categoriaS, categoriaE
-
-
-def entrada(categoriaS, categoriaE):
-    print('\n \tCATEGORIAS:\nCASA\nCOMIDA\nTRANSPORTE\nOUTRO')
-    escolhaCategoria = input('\nDigite a categoria da sua entrada: ').upper()
-    if escolhaCategoria == 'OUTRO':
-        nova = input("Adicione uma categoria: ").upper()
-        categoriaE[nova] = []
-        categoriaS[nova] = []
-        valor = float(input(f'Digite o valor dessa entrada: '))
-        categoriaE[nova].append(valor)
-    else:
-        valor = float(input(f'Digite o valor dessa entrada: '))
-        categoriaE[escolhaCategoria].append(valor)
-    return categoriaS, categoriaE
-
-
-def leitura(categoriaS, categoriaE):
-    print('<----------------------------------------------->')
-    print('\tSALDO ATUAL POR CATEGORIA: ')
-    for i in categoriaS:
-        for j in categoriaE:
-            if i == j:
-                total = sum(categoriaE[j]) - sum(categoriaS[i])
-                
-                print(f'{i}:', 'R${:.2f}'.format(total))
-                
-    print('<----------------------------------------------->')
-    print('\t\tENTRADAS:')
-    for j in categoriaE:
-        print(f'{j}: {categoriaE[j]}')
+def fazer_login(usuarios):
+    cpf = input("Digite o CPF: ")
+    senha = input("Digite a senha: ")
     
-    print('<----------------------------------------------->')
-    print('\t\tSAÍDAS:')
-    for i in categoriaS:
-        print(f'{i}:{categoriaS[i]}')
-        
-    return (total)
 
-# categoria e valores dentro dela, no fim a subtração da entrada menos a saída
+    with open('USUARIOS22.05.txt', 'r') as arquivo:
+        primeira_linha = arquivo.readline().strip()
+        if primeira_linha == f"{cpf},{senha}":
+            return True
+        arquivo.close()
+    return False
 
-categoriaS = {"CASA": [], "COMIDA": [], "TRANSPORTE": []}
-categoriaE = {"CASA": [], "COMIDA": [], "TRANSPORTE": []}
+def salvar_usuarios(usuarios):
+    with open("USUARIOS22.05.txt", "w") as arquivo:
+        for usuario in usuarios:
+            linha = f"{usuario['cpf']},{usuario['senha']}\n"
+            arquivo.write(linha)
+        arquivo.close()
 
-inicio = input('Deseja realizar alguma transação [S]Sim ou [N]Não?  ').upper()
+def carregar_usuarios():
+    usuarios = []
+    try:
+        with open("USUARIOS22.05.txt", "r") as arquivo:
+            for linha in arquivo:
+                cpf, senha = linha.strip().split(",")
+                usuarios.append({"cpf": cpf, "senha": senha})
+            arquivo.close()
+    except FileNotFoundError:
+        pass
 
-while inicio == 'S':
+    return usuarios
 
-    transacao = int(input('\nDigite o tipo de operação que deseja realizar:\n\n[1] = Entrada de dinheiro\n[2] = Saída de dinheiro \n[3] = Extrato Bancário: \n[4] = Deleção \n[5] = Atualizações \n--> '))
+def main():
+    usuarios = carregar_usuarios()
 
-    if transacao == 1:
-        categoriaS, categoriaE = entrada(categoriaS, categoriaE)
-    elif transacao == 2:
-        categoriaS, categoriaE = saida(categoriaS, categoriaE)
-    elif transacao == 3:
-        total = leitura(categoriaS, categoriaE)
+    while True:
+        print("\nOpções:")
+        print("1. Cadastrar usuário")
+        print("2. Fazer login")
+        opcao = input("Digite o número da opção desejada: ")
+
+        if opcao == "1":
+            print("\nCadastro de usuário:")
+            usuario = cadastrar_usuario()
+            usuarios.append(usuario)
+            salvar_usuarios(usuarios)
+            print("Usuário cadastrado com sucesso!")
+        elif opcao == "2":
+            print("\nLogin:")
+            if fazer_login(usuarios):
+                print("Login bem-sucedido! Acesso permitido.")
+                break
+            else:
+                print("Login falhou! CPF ou senha inválidos.")
+
+        else:
+            print("Opção inválida. Por favor, tente novamente.")
+
+main()
+
+while True:
+
+    def apagar_dados():
+        with open('gastos.csv', 'w') as file:
+            file.write("")
+
+    def guardar_dados(tipo, dicionario):
+        with open('gastos.csv', 'a') as file:
+            file.write(f"{tipo}:\n")
+
+            for chave, lista in dicionario.items():
+                soma = 0
+
+                for valor in lista:
+                    soma += valor
+
+                if tipo == 'SAIDA':
+                    soma = -soma
+                    
+                file.write(f"{chave} -> {lista} -> {soma}\n")
+
+    def saida(categoriaS, categoriaE):
+
+        print('\nCATEGORIAS:')
+        for i in categoriaS:
+            print(f' - {i}')
+        print(' - OUTRO')
+
+        escolhaCategoria = input('\nDigite a categoria da sua despesa: ').upper()
+
+        if escolhaCategoria == 'OUTRO':
+            nova = input("Adicione uma categoria: ").upper()
+            categoriaS[nova] = []
+            categoriaE[nova] = []
+            valor = float(input(f'Digite o valor dessa despesa: '))
+            categoriaS[nova].append(valor)
+
+        else:
+            valor = float(input(f'Digite o valor dessa despesa: '))
+
+            if escolhaCategoria in categoriaS:
+                categoriaS[escolhaCategoria].append(valor)
+
+            else:
+                categoriaErro = (f"A chave '{escolhaCategoria}' não existe no dicionário. Deseja adicioná-la [S]Sim ou [N]Não? ").upper()
+                if categoriaErro == 'S':
+                    nova = input("Adicione uma categoria: ").upper()
+                    categoriaS[nova] = []
+                    categoriaE[nova] = []
+                    valor = float(input(f'Digite o valor dessa despesa: '))
+                    categoriaS[nova].append(valor)
+
+        return categoriaS, categoriaE
+
+    def entrada(categoriaS, categoriaE):
+
+        print('\nCATEGORIAS:')
+        for i in categoriaE:
+            print(f' - {i}')
+        print(' - OUTRO')
+
+        escolhaCategoria = input(
+            '\nDigite a categoria da sua entrada: ').upper()
+
+        if escolhaCategoria == 'OUTRO':
+            nova = input("Adicione uma categoria: ").upper()
+            categoriaE[nova] = []
+            categoriaS[nova] = []
+            valor = float(input(f'Digite o valor dessa entrada: '))
+            categoriaE[nova].append(valor)
+
+        else:
+            valor = float(input(f'Digite o valor dessa entrada: '))
+
+            if escolhaCategoria in categoriaE:
+                categoriaE[escolhaCategoria].append(valor)
+
+            else:
+                categoriaErro = (
+                    f"A chave '{escolhaCategoria}' não existe no dicionário. Deseja adicioná-la [S]Sim ou [N]Não? ").upper()
+                if categoriaErro == 'S':
+                    nova = input("Adicione uma categoria: ").upper()
+                    categoriaE[nova] = []
+                    categoriaS[nova] = []
+                    valor = float(input(f'Digite o valor dessa despesa: '))
+                    categoriaE[nova].append(valor)
+
+        return categoriaS, categoriaE
+
+    def leitura(categoriaS, categoriaE):
+
+        print('<----------------------------------------------->')
+        print('\tSALDO ATUAL POR CATEGORIA: ')
+
+        for i in categoriaS:
+            for j in categoriaE:
+                if i == j:
+                    total = sum(categoriaE[j]) - sum(categoriaS[i])
+
+                    print(f'{i}:', 'R${:.2f}'.format(total))
+
+        print('<----------------------------------------------->')
+        print('\t\tENTRADAS:')
+        for j in categoriaE:
+            print(f'{j}: {categoriaE[j]}')
+
+        print('<----------------------------------------------->')
+        print('\t\tSAÍDAS:')
+        for i in categoriaS:
+            print(f'{i}:{categoriaS[i]}')
+
+        return (total)
+
+    def deletar(categoriaS, categoriaE):
+
+        delecao = int(input(
+            '\nDigite o tipo de operação que deseja realizar: \n[1] = Deletar Categoria(s)\n[2] = Deletar Valores\n--> '))
+
+        if delecao == 1:
+            deletarCategoria = input(
+                '\nDigite o nome da categoria que deseja deletar: ').upper()
+
+            print('\nCATEGORIAS:')
+            for i in categoriaS:
+                print(f' - {i}')
+
+            if deletarCategoria in categoriaE:
+                del categoriaE[deletarCategoria]
+                del categoriaS[deletarCategoria]
+                print(
+                    f"\nA categoria '{deletarCategoria}' foi removida com sucesso.")
+
+            else:
+                print(
+                    f"\nA categoria '{deletarCategoria}' não existe no dicionário.")
+
+        elif delecao == 2:
+
+            print('\nCATEGORIAS:')
+            for i in categoriaS:
+                print(f' - {i}')
+
+            categoriaValor = input(
+                '\nDigite o nome da categoria de onde está o valor que deseja deletar: ').upper()
+
+            if categoriaValor in categoriaE:
+                escolhaDelecao = int(input(
+                    '\nDigite a deleção que deseja realizar: \n[1] = Deletar valor específico \n[2] = Deletar todos os valores\n--> '))
+
+                if escolhaDelecao == 1:
+                    transacaoValor = input(
+                        'Digite o tipo de transação do valor que deseja deletar: \n[E] = Entrada \n[S] = Saída\n--> ').upper()
+
+                    if transacaoValor == 'E':
+                        deletarValor = float(
+                            input('Digite o valor que deseja remover: '))
+                        if deletarValor in categoriaE[categoriaValor]:
+                            categoriaE[categoriaValor].remove(deletarValor)
+                            print(
+                                f"\nO valor R${deletarValor} da categoria '{categoriaValor}' foi removida com sucesso.")
+                        else:
+                            print(
+                                f'O valor "{deletarValor}" não foi encontrado.')
+
+                    elif transacaoValor == 'S':
+                        deletarValor = float(
+                            input('Digite o valor que deseja remover: '))
+                        if deletarValor in categoriaS[categoriaValor]:
+                            categoriaS[categoriaValor].remove(deletarValor)
+                            print(
+                                f"\nO valor R${deletarValor} da categoria '{categoriaValor}' foi removida com sucesso.")
+                        else:
+                            print(
+                                f'O valor "{deletarValor}" não foi encontrado.')
+
+                if escolhaDelecao == 2:
+                    categoriaE.clear[categoriaValor]
+                    categoriaS.clear[categoriaValor]
+                    print(
+                        f'Todos os valores da categoria {categoriaValor} foram deletados com sucesso.')
+
+            else:
+                print(
+                    f"\nA categoria '{categoriaValor}' não existe no dicionário.")
+
+        return categoriaS, categoriaE
+
+    def mostrar_dados():
+        with open('gastos.txt', 'r') as file:
+            dados = file.readlines()
+
+            for categoria in dados:
+                print(categoria, end='')
+
+    # categoria e valores dentro dela, no fim a subtração da entrada menos a saída
 
     print()
-    print(categoriaE)
-    print(categoriaS)
-    continuar = input('\nDeseja realizar outra transação [S]Sim ou [N]Não?  ').upper()
+    print('Olá Natália!')
 
-    if continuar == 'N':
-        print("\nAté logo.")
-        break
+    categoriaS = {"CASA": [], "COMIDA": [], "TRANSPORTE": []}
+    categoriaE = {"CASA": [], "COMIDA": [], "TRANSPORTE": []}
 
-while inicio == 'N':
-    print("\nAté logo.")
-    break
+    inicio = True
+
+    while True:
+        try:
+            inicio = input(
+                '\nDeseja realizar alguma transação [S]Sim ou [N]Não? ').upper()
+
+            if inicio == 'S':
+                transacao = int(input(
+                    '\nDigite o tipo de operação que deseja realizar:\n\n[1] = Entrada de dinheiro\n[2] = Saída de dinheiro \n[3] = Extrato Bancário: \n[4] = Deleção \n[5] = Atualizações \n--> '))
+
+                if transacao == 1:
+                    categoriaS, categoriaE = entrada(categoriaS, categoriaE)
+                elif transacao == 2:
+                    categoriaS, categoriaE = saida(categoriaS, categoriaE)
+                elif transacao == 3:
+                    total = leitura(categoriaS, categoriaE)
+                    mostrar_dados()
+                elif transacao == 4:
+                    categoriaS, categoriaE = deletar(categoriaS, categoriaE)
+
+                apagar_dados()
+                guardar_dados('ENTRADA', categoriaE)
+                guardar_dados('SAIDA', categoriaS)
+
+            elif inicio == 'N':
+                print("\nAté logo.")
+                break
+
+            else:
+                print("\nErro! Esta opção não existe. Tente Novamente.\n")
+                
+
+        except EOFError:
+            break
