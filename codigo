@@ -1,3 +1,6 @@
+import os 
+os.system('cls')
+
 def cadastrar_usuario():
     cpf = input("Digite o CPF: ")
     senha = input("Digite a senha: ")
@@ -269,11 +272,11 @@ while True:
 
     while True:
         try:
-            inicio = input('\nDeseja realizar alguma operação [S]Sim ou [N]Não? ').upper()
+            inicio = input(
+                '\nDeseja realizar alguma operação [S]Sim ou [N]Não? ').upper()
 
             if inicio == 'S':
-                transacao = int(input(
-                    '\nDigite o tipo de operação que deseja realizar:\n\n[1] = Entrada de dinheiro\n[2] = Saída de dinheiro \n[3] = Extrato Bancário: \n[4] = Deleção \n[5] = Atualizações \n--> '))
+                transacao = int(input('\nDigite o tipo de operação que deseja realizar:\n\n[1] = Entrada de dinheiro\n[2] = Saída de dinheiro \n[3] = Extrato Bancário: \n[4] = Deleção \n[5] = Atualizações \n--> '))
 
                 if transacao == 1:
                     categoriaS, categoriaE = entrada(categoriaS, categoriaE)
@@ -299,3 +302,5 @@ while True:
 
         except EOFError:
             break
+
+    
