@@ -269,8 +269,7 @@ while True:
 
     while True:
         try:
-            inicio = input(
-                '\nDeseja realizar alguma transação [S]Sim ou [N]Não? ').upper()
+            inicio = input('\nDeseja realizar alguma operação [S]Sim ou [N]Não? ').upper()
 
             if inicio == 'S':
                 transacao = int(input(
